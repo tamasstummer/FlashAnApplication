@@ -121,7 +121,7 @@ def unzip_downloaded_binary() -> None:
 #def delete_frequency_mfg_token() -> None:
 
     #...
-def flash_application_binary(serialno, board_name) -> None:
+def flash_application_binary(serialno, board_name, region_name) -> None:
     print("----------------------------------------------")
     print("Flash the hex files")
 
@@ -137,8 +137,10 @@ def flash_application_binary(serialno, board_name) -> None:
         os.system(commander + " device masserase -s " + str(serialno) + " -d " + SERIES2_BOARDS.get(board_name))
         os.system(commander + " device reset -s " + str(serialno) + " -d " + SERIES2_BOARDS.get(board_name))
 
+        region_name = check_region(region_name)
+
         # Reset the mfg token
-        os.system(commander + " flash --tokengroup znet --token MFG_ZWAVE_COUNTRY_FREQ:0x01 -s " + str(serialno) + " -d " + SERIES2_BOARDS.get(board_name))
+        os.system(commander + " flash --tokengroup znet --token MFG_ZWAVE_COUNTRY_FREQ:" + frequencies.get(region_name)  + " -s " + str(serialno) + " -d " + SERIES2_BOARDS.get(board_name))
 
         #Flash the downloaded hex file
         os.system(commander + " flash " + hex_file_path + " -s " + str(serialno) + " -d " + SERIES2_BOARDS.get(board_name))
@@ -155,7 +157,7 @@ def main() -> None:
     print("Flash any sample application on any board")
     download_application_binary(args.branch, args.build, args.name, args.board, args.freq)
     unzip_downloaded_binary()
-    flash_application_binary(args.serialno, args.board)
+    flash_application_binary(args.serialno, args.board, args.freq)
     delete_downloaded_shit()
 
 if __name__ == "__main__":
