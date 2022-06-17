@@ -5,11 +5,11 @@ import zipfile
 import argparse
 import sys
 import glob
-import subprocess
+import yaml
 
 #----------------------------------------------------------
-# Set this path yourself first
-commander = "C:/SiliconLabs/studio/rel_1361/SimplicityStudio_v5/developer/adapter_packs/commander/commander.exe"
+# Set this path in the configuration_parameters.yaml file
+commander = ""
 #----------------------------------------------------------
 
 default_application = "SwitchOnOff"
@@ -153,8 +153,24 @@ def delete_downloaded_shit() -> None:
     os.system("rm -rf release")
     os.system("rm -rf " + name_of_zip)
 
+def parse_config_values() -> None:
+    with open("config/config_parameters.yaml", 'r') as stream:
+        data_loaded = yaml.safe_load(stream)
+
+    for val in find_in_yaml(data_loaded, 'studio_location'):
+        commander = val + "developer/adapter_packs/commander/commander.exe"
+
+def find_in_yaml(d, tag):
+    if tag in d:
+        yield d[tag]
+    for k, v in d.items():
+        if isinstance(v, dict):
+            for i in find(v, tag):
+                yield i
+
 def main() -> None:
     print("Flash any sample application on any board")
+    parse_config_values()
     download_application_binary(args.branch, args.build, args.name, args.board, args.freq)
     unzip_downloaded_binary()
     flash_application_binary(args.serialno, args.board, args.freq)
