@@ -25,8 +25,8 @@ def main() -> None:
     print("Available devices:")
     command = usb_detector +  " -slist"
     cmd = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+    found_board = ""
     for line in cmd.stdout:
-        found_board = ""
         if b"(440" in line:
             serial_number = line[7:-5].decode("utf-8")
         if b"adapterName" in line:

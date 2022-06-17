@@ -15,11 +15,6 @@ import glob
 import yaml
 import list_usb_devices
 
-#----------------------------------------------------------
-# Set this path in the configuration_parameters.yaml file
-commander = ""
-#----------------------------------------------------------
-
 default_application = "SwitchOnOff"
 default_board = "brd4205b"
 default_frquency = "US"
@@ -162,6 +157,7 @@ def delete_downloaded_shit() -> None:
     os.system("rm -rf " + name_of_zip)
 
 def parse_config_values() -> None:
+    global commander
     with open("config/config_parameters.yaml", 'r') as stream:
         data_loaded = yaml.safe_load(stream)
 
