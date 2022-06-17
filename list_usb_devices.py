@@ -32,6 +32,8 @@ def main() -> None:
         if b"adapterName" in line:
             found_board = serial_number + " --- " + line[14:].decode("utf-8")
             print(found_board)
+    if found_board == "":
+        print("No connected devices!")
 
 if __name__ == "__main__":
   main()
