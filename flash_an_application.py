@@ -6,6 +6,7 @@ import argparse
 import sys
 import glob
 import yaml
+import list_usb_devices
 
 #----------------------------------------------------------
 # Set this path in the configuration_parameters.yaml file
@@ -52,7 +53,7 @@ frequencies= {
 #-----------------------------------------------------------------------------------------------
 # Parse the inputs first
 parser = argparse.ArgumentParser(description="Flash any sample application on any board")
-parser.add_argument('--serialno',          type=str, help="JLink serial nmber of the board",                   nargs='?') #Mandatory parameter
+parser.add_argument('--serialno',          type=str, help="JLink serial nmber of the board",                   nargs='?', default = "0") 
 parser.add_argument('--name',              type=str, help="Name of the application, you want to flash.",       nargs='?', default = default_application)
 parser.add_argument('--freq',              type=str, help="Frequency of the binary",                           nargs='?', default = default_frquency)
 parser.add_argument('--board',             type=str, help="Target board.",                                     nargs='?', default = default_board)
@@ -168,9 +169,18 @@ def find_in_yaml(d, tag):
             for i in find(v, tag):
                 yield i
 
+def check_serial_number(serialno) -> None:
+    if serialno == "0":
+        print("No serial number given!")
+        list_usb_devices.main()
+        sys.exit(-1)
+
+
+
 def main() -> None:
     print("Flash any sample application on any board")
     parse_config_values()
+    check_serial_number(args.serialno)
     download_application_binary(args.branch, args.build, args.name, args.board, args.freq)
     unzip_downloaded_binary()
     flash_application_binary(args.serialno, args.board, args.freq)
