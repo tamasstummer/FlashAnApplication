@@ -35,6 +35,7 @@ SERIES1_BOARDS= {
   "brd4208a": "EFR32ZG14",
   "brd4209a": "EFR32RZ13",
 }
+
 SERIES2_BOARDS= {
   "brd4204a" : "EFR32ZG23",
   "brd4204b" : "EFR32ZG23",
@@ -66,9 +67,8 @@ args = parser.parse_args()
 
 # ---------------------------------------------------------------------------------------------
 def download_application_binary(branch_name, build_name, app_name, board_name, region_name) -> None:
-    print("----------------------------------------------")
     print("Download app binary...")
-    #ZW_SerialAPI_Controller_7.18.0_238_ZGM230S_brd2603a_REGION_US
+
     branch_name = branch_name.replace("/", "%252F")  # Jenkins needs this
 
     #Check every possible error at the begining
@@ -84,7 +84,6 @@ def download_application_binary(branch_name, build_name, app_name, board_name, r
     print("This URL is the source of your hex file: " + url)
 
     os.system('wget ' + url)
-    #https://zwave-jenkins.silabs.com/job/zw-zwave/job/develop%252F22q2/lastSuccessfulBuild/artifact/Apps/SwitchOnOff/out/brd2603a_REGION_US/build/release/
     print("Done")
 
 def give_back_application_cathegory(application_name) -> str:
@@ -121,9 +120,6 @@ def unzip_downloaded_binary() -> None:
     return
     print("Done")
 
-#def delete_frequency_mfg_token() -> None:
-
-    #...
 def flash_application_binary(serialno, board_name, region_name) -> None:
     print("----------------------------------------------")
     print("Flash the hex files")
@@ -152,7 +148,7 @@ def flash_application_binary(serialno, board_name, region_name) -> None:
         os.system(commander + " tokendump --tokengroup znet --token MFG_ZWAVE_COUNTRY_FREQ -s " + str(serialno) + " -d " + SERIES2_BOARDS.get(board_name))
         print("Done")
 
-def delete_downloaded_shit() -> None:
+def delete_downloaded_files() -> None:
     test = os.listdir('.')
 
     for item in test:
@@ -173,7 +169,7 @@ def find_in_yaml(d, tag):
         yield d[tag]
     for k, v in d.items():
         if isinstance(v, dict):
-            for i in find(v, tag):
+            for i in find_in_yaml(v, tag):
                 yield i
 
 def check_serial_number(serialno) -> None:
@@ -188,11 +184,11 @@ def main() -> None:
     print("Flash any sample application on any board")
     parse_config_values()
     check_serial_number(args.serialno)
-    delete_downloaded_shit()
+    delete_downloaded_files()
     download_application_binary(args.branch, args.build, args.name, args.board, args.freq)
     unzip_downloaded_binary()
     flash_application_binary(args.serialno, args.board, args.freq)
-    delete_downloaded_shit()
+    delete_downloaded_files()
 
 if __name__ == "__main__":
   main()
