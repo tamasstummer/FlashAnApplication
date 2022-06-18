@@ -153,8 +153,12 @@ def flash_application_binary(serialno, board_name, region_name) -> None:
         print("Done")
 
 def delete_downloaded_shit() -> None:
+    test = os.listdir('.')
+
+    for item in test:
+        if item.endswith(".zip"):
+            os.remove(os.path.join('.', item))
     os.system("rm -rf release")
-    os.system("rm -rf " + name_of_zip)
 
 def parse_config_values() -> None:
     global commander
@@ -184,6 +188,7 @@ def main() -> None:
     print("Flash any sample application on any board")
     parse_config_values()
     check_serial_number(args.serialno)
+    delete_downloaded_shit()
     download_application_binary(args.branch, args.build, args.name, args.board, args.freq)
     unzip_downloaded_binary()
     flash_application_binary(args.serialno, args.board, args.freq)
