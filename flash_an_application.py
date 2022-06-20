@@ -48,9 +48,24 @@ SERIES2_BOARDS= {
 }
 
 frequencies= {
-  "REGION_EU" : "0x00",
-  "REGION_US" : "0x01",
-  "REGION_US_LR" : "0x09",
+  "REGION_EU"               : "0x00",
+  "REGION_US"               : "0x01",
+  "REGION_ANZ"              : "0x02",
+  "REGION_HK"               : "0x03",
+  "REGION_IN"               : "0x05",
+  "REGION_IL"               : "0x06",
+  "REGION_RU"               : "0x07",
+  "REGION_CN"               : "0x08",
+  "REGION_US_LR"            : "0x0A",
+  "REGION_US_LR_BACKUP"     : "0x0B",
+  "REGION_2CH_NUM"          : "0x0C",   #(REGION_US_LR_BACKUP - REGION_EU) + 1
+  "REGION_JP"               : "0x20",
+  "REGION_KR"               : "0x21",
+  "REGION_3CH_NUM"          : "0x02",   #(REGION_KR - REGION_JP) + 1
+  "REGION_US_LR_END_DEVICE" : "0x30",
+  "EGION_LR_END_DEVICE_NUM" : "0x01",
+  "REGION_UNDEFINED"        : "0xFE",
+  "REGION_DEFAULT"          : "0xFF",
 }
 
 #-----------------------------------------------------------------------------------------------
@@ -66,7 +81,7 @@ parser.add_argument('--build',             type=str, help="Specifies the number 
 args = parser.parse_args()
 
 # ---------------------------------------------------------------------------------------------
-def download_application_binary(branch_name, build_name, app_name, board_name, region_name) -> None:
+def download_application_binary(branch_name, build_name, app_name, board_name) -> None:
     print("Download app binary...")
 
     branch_name = branch_name.replace("/", "%252F")  # Jenkins needs this
@@ -74,13 +89,12 @@ def download_application_binary(branch_name, build_name, app_name, board_name, r
     #Check every possible error at the begining
     app_chategory = give_back_application_cathegory(app_name)
     board_name = check_if_board_existing(board_name)
-    region_name = check_region(region_name)
     extra_path_element = ""  # in case of the SerialAPI, we need a "Controller" element in the path
     if(app_name == "SerialAPI"):
         extra_path_element = "Controller/"
     global name_of_zip
     name_of_zip = app_name + ".zip"
-    url = "https://zwave-jenkins.silabs.com/job/zw-zwave/job/" + branch_name + "/" + build_name + "/artifact/" + app_chategory + "/" + app_name + "/out/" + extra_path_element + board_name + "_" + region_name + "/build/release/*zip*/" + name_of_zip
+    url = "https://zwave-jenkins.silabs.com/job/zw-zwave/job/" + branch_name + "/" + build_name + "/artifact/" + app_chategory + "/" + app_name + "/out/" + extra_path_element + board_name + "_" + "REGION_US" + "/build/release/*zip*/" + name_of_zip
     print("This URL is the source of your hex file: " + url)
 
     os.system('wget ' + url)
@@ -162,7 +176,10 @@ def parse_config_values() -> None:
         data_loaded = yaml.safe_load(stream)
 
     for val in find_in_yaml(data_loaded, 'studio_location'):
-        commander = val + "developer/adapter_packs/commander/commander.exe"
+        current_platform = sys.platform
+        if current_platform == 'cygwin':
+            val = str(val).replace('\\', '/')
+        commander = val + "/developer/adapter_packs/commander/commander.exe"
 
 def find_in_yaml(d, tag):
     if tag in d:
@@ -185,7 +202,7 @@ def main() -> None:
     parse_config_values()
     check_serial_number(args.serialno)
     delete_downloaded_files()
-    download_application_binary(args.branch, args.build, args.name, args.board, args.freq)
+    download_application_binary(args.branch, args.build, args.name, args.board)
     unzip_downloaded_binary()
     flash_application_binary(args.serialno, args.board, args.freq)
     delete_downloaded_files()
