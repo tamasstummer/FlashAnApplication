@@ -44,5 +44,5 @@ List of Apps:
 
 Example call:
 ```
-python3 flash_an_application.py --serialno 440262211 --name SensorPIR --freq US --board brd4204d --branch develop/22q2 --build lastSuccessfulBuild
+python3 flash_an_application.py --name zwave_soc_switch_on_off --freq US --branch develop/22q4 --build lastSuccessfulBuild --serialno 440262211 --board brd4205d
 ```

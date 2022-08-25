@@ -13,7 +13,7 @@ def find_in_yaml(d, tag):
                 yield i
 
 
-def main() -> None:
+def main():
 
     with open("config/config_parameters.yaml", 'r') as stream:
         data_loaded = yaml.safe_load(stream)
@@ -25,15 +25,27 @@ def main() -> None:
     print("Available devices:")
     command = usb_detector +  " -slist"
     cmd = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-    found_board = ""
+    found_board_string = ""
+    number_of_found_board = 0
+    found_serial_number = ""
+    found_board_name = ""
     for line in cmd.stdout:
+        #print(line)
         if b"(440" in line:
             serial_number = line[7:-5].decode("utf-8")
-        if b"adapterName" in line:
-            found_board = serial_number + " --- " + line[14:].decode("utf-8")
-            print(found_board)
-    if found_board == "":
+        if b"boardName[0]=BRD2603A" in line or b"boardName[1]=BRD42" in line:
+            found_board_string = serial_number + " --- " + line[15:].decode("utf-8")
+            print(found_board_string)
+            number_of_found_board = number_of_found_board + 1
+            found_serial_number = serial_number
+            found_board_name = line[15:23].decode("utf-8")
+    if number_of_found_board == 0:
         print("No connected devices!")
+        return "0", "0"
+    elif number_of_found_board == 1:
+        return found_serial_number, found_board_name
+    else:
+        return "0", "0"
 
 if __name__ == "__main__":
   main()

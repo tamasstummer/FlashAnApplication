@@ -15,11 +15,8 @@ import glob
 import yaml
 import list_usb_devices
 
-default_application = "SwitchOnOff"
-default_board = "brd4205b"
 default_frquency = "US"
-default_build = "lastsuccessful"
-default_branch = "develop%252F22q2" # develop/22q2
+default_branch = "develop%252F22q4" # develop/22q4
 default_build = "lastSuccessfulBuild"
 
 #Apps_before_22q2 and board definitions
@@ -75,9 +72,9 @@ frequencies= {
 # Parse the inputs first
 parser = argparse.ArgumentParser(description="Flash any sample application on any board")
 parser.add_argument('--serialno',          type=str, help="JLink serial nmber of the board",                   nargs='?', default = "0") 
-parser.add_argument('--name',              type=str, help="Name of the application, you want to flash.",       nargs='?', default = default_application)
+parser.add_argument('--name',              type=str, help="Name of the application, you want to flash.",                               )
 parser.add_argument('--freq',              type=str, help="Frequency of the binary",                           nargs='?', default = default_frquency)
-parser.add_argument('--board',             type=str, help="Target board.",                                     nargs='?', default = default_board)
+parser.add_argument('--board',             type=str, help="Target board.",                                                             )
 parser.add_argument('--branch',            type=str, help="Name of a specific jenkins branch.",                nargs='?', default = default_branch)
 parser.add_argument('--build',             type=str, help="Specifies the number of the build on jenkins",      nargs='?', default = default_build)
 
@@ -193,10 +190,14 @@ def find_in_yaml(d, tag):
                 yield i
 
 def check_serial_number(serialno) -> None:
-    if serialno == "0":
-        print("No serial number given!")
-        list_usb_devices.main()
-        sys.exit(-1)
+    if serialno == "0":   # if no serialnumber is given from commandline
+        myDevice = list_usb_devices.main()
+        if myDevice[0] != "0":
+            args.serialno = myDevice[0]
+            args.board = myDevice[1].lower()
+        else:
+            print("Please use --serialno flag\n")
+            sys.exit(-1)
 
 
 
