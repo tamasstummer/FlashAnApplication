@@ -25,11 +25,22 @@ Every parameter is optional except serial number.
 Default values if not given:
 
  - default_application - SwitchOnOff
-- default_board - brd4205b
-- default_frquency - US
-- default_build - lastsuccessful
-- default_branch - develop/22q2
-- default_build - lastSuccessfulBuild
+ - default_board - brd4205b
+ - default_frquency - US
+ - default_build - lastsuccessful
+ - default_branch - develop/22q2
+ - default_build - lastSuccessfulBuild
+
+List of Apps:
+ - zwave_soc_switch_on_off
+ - zwave_soc_power_strip
+ - zwave_soc_sensor_pir
+ - zwave_soc_door_lock_keypad
+ - zwave_soc_wall_controller
+ - zwave_soc_led_bulb
+ - zwave_ncp_serial_api
+ - zwave_ncp_zniffer_pti
+ - zwave_soc_multilevel_sensor
 
 Example call:
 ```

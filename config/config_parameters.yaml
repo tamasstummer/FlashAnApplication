@@ -1,4 +1,3 @@
 # Set up all the path as in your system
 
-# On Windows with cygwin terminal - currently the only supported method
-studio_location: C:\SiliconLabs\Studio\SimplicityStudio_v5
+studio_location: C:/SiliconLabs/studio/rel_1361/SimplicityStudio_v5/

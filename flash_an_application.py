@@ -22,10 +22,13 @@ default_build = "lastsuccessful"
 default_branch = "develop%252F22q2" # develop/22q2
 default_build = "lastSuccessfulBuild"
 
-#Apps and board definitions
+#Apps_before_22q2 and board definitions
 #-----------------------------------------------------------------------------------------------
-Apps = ['SwitchOnOff', 'PowerStrip', 'SensorPIR', 'DoorLockKeyPad', 'WallController', 'LEDBulb', 'SerialAPI', 'ZnifferPTI']
-NonCertifiableApps = ['MultilevelSensor']
+Apps_before_22q2 = ['SwitchOnOff', 'PowerStrip', 'SensorPIR', 'DoorLockKeyPad', 'WallController', 'LEDBulb', 'SerialAPI', 'ZnifferPTI']
+NonCertifiableApps_before_22q2 = ['MultilevelSensor']
+
+Apps = ['zwave_soc_switch_on_off', 'zwave_soc_power_strip', 'zwave_soc_sensor_pir', 'zwave_soc_door_lock_keypad', 'zwave_soc_wall_controller', 'zwave_soc_led_bulb', 'zwave_ncp_serial_api', 'zwave_ncp_zniffer_pti']
+NonCertifiableApps = ['zwave_soc_multilevel_sensor']
 
 SERIES1_BOARDS= {
   "brd4200a": "ZGM130S",
@@ -101,9 +104,9 @@ def download_application_binary(branch_name, build_name, app_name, board_name) -
     print("Done")
 
 def give_back_application_cathegory(application_name) -> str:
-    if(application_name in Apps):
+    if(application_name in Apps_before_22q2 or application_name in Apps):
         return "Apps"
-    elif(application_name in NonCertifiableApps):
+    elif(application_name in NonCertifiableApps_before_22q2 or application_name in NonCertifiableApps):
         return "NonCertifiableApps"
     else:
         print('The given application chategory is invalid')
