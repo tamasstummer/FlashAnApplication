@@ -8,6 +8,7 @@ print("""\
 """)
 
 import os
+import platform
 import zipfile
 import argparse
 import sys
@@ -168,7 +169,10 @@ def delete_downloaded_files() -> None:
     for item in test:
         if item.endswith(".zip"):
             os.remove(os.path.join('.', item))
-    os.system("rm -rf release")
+    if 'Windows' == platform.system():
+        os.system('rmdir .\\release /s /q')
+    else:     
+        os.system("rm -rf release")
 
 def parse_config_values() -> None:
     global commander

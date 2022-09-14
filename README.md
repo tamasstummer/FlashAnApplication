@@ -10,7 +10,7 @@ What can it do for you:
 
 What steps are needed before first run:
  - get python3
- - get cygwin or WSL
+ - get cygwin or WSL (or wget with Chocolatey and it will work from PS)
  - in ~/config/config_parameters.yaml update the paths accordingly
 
 Command switches:
