@@ -27,6 +27,8 @@ NonCertifiableApps_before_22q2 = ['MultilevelSensor']
 
 Apps = ['zwave_soc_switch_on_off', 'zwave_soc_power_strip', 'zwave_soc_sensor_pir', 'zwave_soc_door_lock_keypad', 'zwave_soc_wall_controller', 'zwave_soc_led_bulb', 'zwave_ncp_serial_api', 'zwave_ncp_zniffer_pti']
 NonCertifiableApps = ['zwave_soc_multilevel_sensor']
+TestApps = ['UL_testtool']
+
 
 SERIES1_BOARDS= {
   "brd4200a": "ZGM130S",
@@ -91,8 +93,8 @@ def download_application_binary(branch_name, build_name, app_name, board_name) -
     app_chategory = give_back_application_cathegory(app_name)
     board_name = check_if_board_existing(board_name)
     extra_path_element = ""  # in case of the SerialAPI, we need a "Controller" element in the path
-    if(app_name == "SerialAPI"):
-        extra_path_element = "Controller/"
+    if(app_name == "zwave_ncp_serial_api"):
+        extra_path_element = "controller/"
     global name_of_zip
     name_of_zip = app_name + ".zip"
     url = "https://zwave-jenkins.silabs.com/job/zw-zwave/job/" + branch_name + "/" + build_name + "/artifact/" + app_chategory + "/" + app_name + "/out/" + extra_path_element + board_name + "_" + "REGION_US" + "/build/release/*zip*/" + name_of_zip
@@ -106,6 +108,8 @@ def give_back_application_cathegory(application_name) -> str:
         return "Apps"
     elif(application_name in NonCertifiableApps_before_22q2 or application_name in NonCertifiableApps):
         return "NonCertifiableApps"
+    elif(application_name in TestApps):
+        return "TestApps"
     else:
         print('The given application chategory is invalid')
         sys.exit(-1)
