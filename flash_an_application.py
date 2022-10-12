@@ -128,7 +128,8 @@ def check_if_board_existing(board_name) -> str:
         return
 
 def check_region(region_name) -> str:
-    region_name = "REGION_" + region_name
+    if 'REGION' not in region_name:
+        region_name = "REGION_" + region_name
     if(region_name in frequencies):
         return region_name
     else:
