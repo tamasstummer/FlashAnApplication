@@ -44,5 +44,8 @@ List of Apps:
 
 Example call:
 ```
-python3 flash_an_application.py --name zwave_soc_switch_on_off --freq US --branch develop/22q4 --build lastSuccessfulBuild --serialno 440262211 --board brd4205d
+python3 flash_an_application.py --name zwave_soc_switch_on_off --freq US --branch develop/22q4 --build lastSuccessfulBuild --serialno 440262211 --board brd4205b
+
+
+python3 flash_a_workspace.py --name zwave_soc_switch_on_off --branch feature/gekoczia/SWPROT-7368_introduce_SLC_workspaces --build lastSuccessfulBuild --serialno 440262211 --board brd4205b --freq US
 ```
