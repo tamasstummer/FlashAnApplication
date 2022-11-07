@@ -131,21 +131,22 @@ def flash_application_binary(serialno, board_name, region_name) -> None:
         hex_file_name = file
         hex_file_path = "./artifact/" + file
         os.chdir("./..")
+    [series, board] = give_back_series(board_name)
     if hex_file_name:
         #Reset device
-        os.system(commander + " device masserase -s " + str(serialno) + " -d " + SERIES2_BOARDS.get(board_name))
-        os.system(commander + " device reset -s " + str(serialno) + " -d " + SERIES2_BOARDS.get(board_name))
+        os.system(commander + " device masserase -s " + str(serialno) + " -d " + board)
+        os.system(commander + " device reset -s " + str(serialno) + " -d " + board)
+        if series is "SERIES2":
+            region_name = check_region(region_name)
 
-        region_name = check_region(region_name)
-
-        # Reset the mfg token
-        os.system(commander + " flash --tokengroup znet --token MFG_ZWAVE_COUNTRY_FREQ:" + frequencies.get(region_name)  + " -s " + str(serialno) + " -d " + SERIES2_BOARDS.get(board_name))
+            # Reset the mfg token
+            os.system(commander + " flash --tokengroup znet --token MFG_ZWAVE_COUNTRY_FREQ:" + frequencies.get(region_name)  + " -s " + str(serialno) + " -d " + board)
 
         #Flash the downloaded hex file
-        os.system(commander + " flash " + hex_file_path + " -s " + str(serialno) + " -d " + SERIES2_BOARDS.get(board_name))
-
-        #Get the region mfg token's value just for sure
-        os.system(commander + " tokendump --tokengroup znet --token MFG_ZWAVE_COUNTRY_FREQ -s " + str(serialno) + " -d " + SERIES2_BOARDS.get(board_name))
+        os.system(commander + " flash " + hex_file_path + " -s " + str(serialno) + " -d " + board)
+        if series is "SERIES2":
+            #Get the region mfg token's value just for sure
+            os.system(commander + " tokendump --tokengroup znet --token MFG_ZWAVE_COUNTRY_FREQ -s " + str(serialno) + " -d " + board)
         print("Done")
 
 def delete_downloaded_files() -> None:
@@ -188,6 +189,13 @@ def check_serial_number(serialno) -> None:
             print("Please use --serialno flag\n")
             sys.exit(-1)
 
+def give_back_series(board_name) ->str:
+    if(SERIES1_BOARDS.get(board_name) is not None):
+        return ["SERIES1", SERIES1_BOARDS.get(board_name)]
+    if(SERIES2_BOARDS.get(board_name) is not None):
+        return ["SERIES2", SERIES2_BOARDS.get(board_name)]
+    else:
+        return [None, None]
 
 
 def main() -> None:
