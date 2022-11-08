@@ -17,6 +17,7 @@ import sys
 import glob
 import yaml
 import list_usb_devices
+import subprocess
 
 default_frquency = "US"
 default_branch = "develop%252F22q4" # develop/22q4
@@ -89,7 +90,10 @@ def download_application_binary(branch_name, build_name, app_name, board_name) -
     check_if_board_existing(board_name)
     global name_of_zip
     name_of_zip = app_name + ".zip"
-    url = "https://zwave-jenkins.silabs.com/job/zw-zwave/job/" + branch_name + "/" + build_name + "/artifact/workspaces/" + app_name + "_workspace/out_" + board_name + "_" +  app_name + "_workspace/artifact/*zip*/" + name_of_zip
+    extra_path_element = ""  # in case of the SerialAPI, we need a "Controller" element in the path
+    if(app_name == "zwave_ncp_serial_api"):
+        extra_path_element = "_controller"
+    url = "https://zwave-jenkins.silabs.com/job/zw-zwave/job/" + branch_name + "/" + build_name + "/artifact/workspaces/" + app_name + "_workspace/out_" + board_name + "_" +  app_name + extra_path_element +"_workspace/artifact/*zip*/" + name_of_zip
     print("This URL is the source of your hex file: " + url)
 
     os.system('wget ' + url)
@@ -147,7 +151,25 @@ def flash_application_binary(serialno, board_name, region_name) -> None:
         if series is "SERIES2":
             #Get the region mfg token's value just for sure
             os.system(commander + " tokendump --tokengroup znet --token MFG_ZWAVE_COUNTRY_FREQ -s " + str(serialno) + " -d " + board)
+        #Read the DSK
+        print_out_dsk(serialno, board)
         print("Done")
+
+def print_out_dsk(serialno, board):
+        cmd = commander + " tokendump --tokengroup znet --token MFG_ZW_QR_CODE -s " + str(serialno) + " -d " + board
+        proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+        (out, err) = proc.communicate()
+        # decode the binary output
+        output = out.decode('UTF-8')
+        # The QR code always starts with the 90 value
+        sdk_position_in_string = output.find('90')
+        # the SDK starts in from the 13th position in the qr code, and 40 caracters long
+        sdk = output[sdk_position_in_string + 12 : sdk_position_in_string + 12 + 40]
+        print("DSK value: ", end = "")
+        for x in range(40):
+            print(sdk[x], end = "")
+            if (x + 1) % 5 == 0 and x > 0:
+                print(" - ", end = "")
 
 def delete_downloaded_files() -> None:
     test = os.listdir('.')
