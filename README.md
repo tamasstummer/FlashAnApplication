@@ -27,8 +27,7 @@ Default values if not given:
  - default_application - SwitchOnOff
  - default_board - brd4205b
  - default_frquency - US
- - default_build - lastsuccessful
- - default_branch - develop/22q2
+ - default_branch - develop/22q4
  - default_build - lastSuccessfulBuild
 
 List of Apps:
@@ -44,8 +43,14 @@ List of Apps:
 
 Example call:
 ```
+SLC App:
 python3 flash_an_application.py --name zwave_soc_switch_on_off --freq US --branch develop/22q4 --build lastSuccessfulBuild --serialno 440262211 --board brd4205b
 
-
+SLC Workspace:
 python3 flash_a_workspace.py --name zwave_soc_switch_on_off --branch feature/gekoczia/SWPROT-7368_introduce_SLC_workspaces --build lastSuccessfulBuild --serialno 440262211 --board brd4205b --freq US
+
+Binary flash:
+Put the binary to the binary_folder, and give the extension with the --ext flag (hex or s37)
+python3 flash_a_binary --freq US --serialno 440262211 --board brd4205b --ext s37
+
 ```
