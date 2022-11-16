@@ -168,8 +168,8 @@ def print_out_dsk(serialno, board):
         print("DSK value: ", end = "")
         for x in range(40):
             print(sdk[x], end = "")
-            if (x + 1) % 5 == 0 and x > 0:
-                print(" - ", end = "")
+            if (x + 1) % 5 == 0 and x > 0 and (x + 1) < 40:
+                print("-", end = "")
 
 def delete_downloaded_files() -> None:
     test = os.listdir('.')
