@@ -26,7 +26,7 @@ default_build = "lastSuccessfulBuild"
 Apps_before_22q2 = ['SwitchOnOff', 'PowerStrip', 'SensorPIR', 'DoorLockKeyPad', 'WallController', 'LEDBulb', 'SerialAPI', 'ZnifferPTI']
 NonCertifiableApps_before_22q2 = ['MultilevelSensor']
 
-Apps = ['zwave_soc_switch_on_off', 'zwave_soc_power_strip', 'zwave_soc_sensor_pir', 'zwave_soc_door_lock_keypad', 'zwave_soc_wall_controller', 'zwave_soc_led_bulb', 'zwave_ncp_serial_api', 'zwave_ncp_zniffer_pti']
+Apps = ['zwave_soc_switch_on_off', 'zwave_soc_power_strip', 'zwave_soc_sensor_pir', 'zwave_soc_door_lock_keypad', 'zwave_soc_wall_controller', 'zwave_soc_led_bulb', 'zwave_ncp_serial_api_controller', 'zwave_ncp_serial_api_end_device', 'zwave_ncp_zniffer_pti']
 NonCertifiableApps = ['zwave_soc_multilevel_sensor']
 TestApps = ['UL_testtool']
 
@@ -94,8 +94,12 @@ def download_application_binary(branch_name, build_name, app_name, board_name) -
     app_chategory = give_back_application_cathegory(app_name)
     board_name = check_if_board_existing(board_name)
     extra_path_element = ""  # in case of the SerialAPI, we need a "Controller" element in the path
-    if(app_name == "zwave_ncp_serial_api"):
+    if(app_name == "zwave_ncp_serial_api_controller"):
         extra_path_element = "controller/"
+        app_name = "zwave_ncp_serial_api"
+    if(app_name == "zwave_ncp_serial_api_end_device"):
+        extra_path_element = "end_device/"
+        app_name = "zwave_ncp_serial_api"
     global name_of_zip
     name_of_zip = app_name + ".zip"
     url = "https://zwave-jenkins.silabs.com/job/zw-zwave/job/" + branch_name + "/" + build_name + "/artifact/" + app_chategory + "/" + app_name + "/out/" + extra_path_element + board_name + "_" + "REGION_US" + "/build/release/*zip*/" + name_of_zip
