@@ -138,7 +138,7 @@ def flash_application_binary(serialno, board_name, region_name, binary_extension
         #Reset device
         os.system(commander + " device masserase -s " + str(serialno) + " -d " + board)
         os.system(commander + " device reset -s " + str(serialno) + " -d " + board)
-        if series is "SERIES2":
+        if series == "SERIES2":
             region_name = check_region(region_name)
 
             # Reset the mfg token
@@ -146,7 +146,7 @@ def flash_application_binary(serialno, board_name, region_name, binary_extension
 
             #Flash the downloaded hex file
         os.system(commander + " flash " + hex_file_path + " -s " + str(serialno) + " -d " + board)
-        if series is "SERIES2":
+        if series == "SERIES2":
             #Get the region mfg token's value just for sure
             os.system(commander + " tokendump --tokengroup znet --token MFG_ZWAVE_COUNTRY_FREQ -s " + str(serialno) + " -d " + board)
         #Read the DSK
@@ -201,7 +201,6 @@ def check_serial_number(serialno) -> None:
 
 
 def main() -> None:
-    print("Flash any sample application on any board")
     parse_config_values()
     check_serial_number(args.serialno)
     flash_application_binary(args.serialno, args.board, args.freq, args.ext)

@@ -37,7 +37,8 @@ List of Apps:
  - zwave_soc_door_lock_keypad
  - zwave_soc_wall_controller
  - zwave_soc_led_bulb
- - zwave_ncp_serial_api
+ - zwave_ncp_serial_api_controller
+ - zwave_ncp_serial_api_end_device
  - zwave_ncp_zniffer_pti
  - zwave_soc_multilevel_sensor
 
