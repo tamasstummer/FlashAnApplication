@@ -55,3 +55,12 @@ Put the binary to the binary_folder, and give the extension with the --ext flag 
 python3 flash_a_binary --freq US --serialno 440262211 --board brd4205b --ext s37
 
 ```
+
+# FlashAnApplication GUI
+
+To start the basic GUI simply start the `.\FlashAnApplication.bat`. Choose the application, board and frequency.
+
+## Limitations (under develop)
+
+- If two or more devices are connected to the host this won't work.
+- You can't choose, which build to flash, because this script will always choose the lastSuccessfulBuild.
