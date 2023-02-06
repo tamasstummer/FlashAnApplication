@@ -19,7 +19,7 @@ import subprocess
 from get_DSK import print_out_dsk
 
 default_frquency = "US"
-default_branch = "develop%252F22q4" # develop/22q4
+default_branch = "develop%252F23q2" # develop/22q4
 default_build = "lastSuccessfulBuild"
 
 #Apps_before_22q2 and board definitions
