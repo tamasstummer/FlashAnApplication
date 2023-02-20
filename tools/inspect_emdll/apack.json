@@ -1,0 +1,94 @@
+{
+  "label": "Device inspector for Exx32 and EFM8 hardware",
+  "featureLevel": "2",
+  "path": [
+    ".",
+    "win32",
+    "win64",
+    "linux",
+    "macosx"
+  ],
+  "requiredFeatureLevel": "apack.core:11",
+  "hwdb.boardid": "method.getPartNumber + method.getVariant",
+  "hwdb.boardrev": "method.getRevision",
+  "hwdb.partid": "id",
+  "apack.adapterLabel": "adapterLabel + \" (\" + serialNumber + \")\"",
+  "apack.boardid": "\"BRD\" + boardId",
+  "apack.boardrev": "boardRevision",
+  "apack.partid": "mcuName",
+  "inspector.usbVid": "0x1366",
+  "inspector.delay": "3000",
+  "executable": {
+    "inspect_emdll:linux.x86_64": {
+      "exe": "inspect_emdll",
+      "lib": [
+        "libemdll.so",
+        "libjlinkarm.so"
+      ]
+    },
+    "inspect_emdll:linux.aarch64": {
+      "exe": "inspect_emdll",
+      "lib": [
+        "libemdll.so",
+        "libjlinkarm.so"
+      ]
+    },
+    "inspect_emdll:win32.x86_64": {
+      "exe": "inspect_emdll.exe",
+      "lib": [
+        "libapack_cpp64.dll",
+        "emdll0.dll",
+        "Qt5Core.dll",
+        "Qt5Network.dll",
+        "JLink_x64.dll",
+        "libgcc_s_seh-1.dll",
+        "libstdc++-6.dll",
+        "libwinpthread-1.dll",
+        "zlib1.dll"
+      ]
+    },
+    "inspect_emdll:macosx.x86_64": {
+      "exe": "inspect_emdll",
+      "lib": [
+        "libemdll.dylib",
+        "libjlinkarm.dylib"
+      ]
+    },
+    "inspect_emdll:macosx.aarch64": {
+      "exe": "inspect_emdll",
+      "lib": [
+        "libemdll.dylib",
+        "libjlinkarm.dylib"
+      ]
+    },
+    "installhelper:linux.x86_64": {
+      "exe": "../../scripting/studioinstallhelper.sh"
+    },
+    "installhelper:linux.aarch64": {
+      "exe": "../../scripting/studioinstallhelper.sh"
+    }
+  },
+  "function": {
+    "help": {
+      "cmd": "$(inspect_emdll) -?"
+    },
+    "detect": {
+      "cmd": "$(inspect_emdll) -list"
+    },
+    "inspect": {
+      "cmd": "$(inspect_emdll) -slist"
+    },
+    "discover": {
+      "cmd": "$(inspect_emdll) -discover"
+    },
+    "postinstall": {
+      "cmd": "$(installhelper) install libqt5network5"
+    },
+    "postupdate": {
+      "cmd": "$(installhelper) install libqt5network5"
+    },
+    "setupcheck": {
+      "cmd": "$(installhelper) install libqt5network5"
+    }
+  }
+}
