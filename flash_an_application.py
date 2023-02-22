@@ -16,6 +16,7 @@ import glob
 import yaml
 import list_usb_devices
 import subprocess
+from get_DSK import print_out_dsk
 
 default_frquency = "US"
 default_branch = "develop%252F22q4" # develop/22q4
@@ -183,22 +184,6 @@ def flash_application_binary(serialno, board_name, region_name) -> None:
         #Read the DSK
         print_out_dsk(serialno, board)
 
-def print_out_dsk(serialno, board):
-        cmd = commander + " tokendump --tokengroup znet --token MFG_ZW_QR_CODE -s " + str(serialno) + " -d " + board
-        proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
-        (out, err) = proc.communicate()
-        # decode the binary output
-        output = out.decode('UTF-8')
-        # The QR code always starts with the 90 value
-        sdk_position_in_string = output.find('90')
-        # the SDK starts in from the 13th position in the qr code, and 40 caracters long
-        sdk = output[sdk_position_in_string + 12 : sdk_position_in_string + 12 + 40]
-        print("DSK value: ", end = "")
-        for x in range(40):
-            print(sdk[x], end = "")
-            if (x + 1) % 5 == 0 and x > 0 and (x + 1) < 40:
-                print("-", end = "")
-
 def delete_downloaded_files() -> None:
     test = os.listdir('.')
 
@@ -238,8 +223,6 @@ def check_serial_number(serialno) -> None:
         else:
             print("Please use --serialno flag\n")
             sys.exit(-1)
-
-
 
 def main() -> None:
     parse_config_values()
