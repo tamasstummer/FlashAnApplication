@@ -1,51 +1,51 @@
-import yaml
-import os
 import subprocess
+import re
 
-usb_monitor = ""
+# TODO move this to a separate file
+SERIES2_BOARDS= {
+  "brd4204a" : "EFR32ZG23",
+  "brd4204b" : "EFR32ZG23",
+  "brd4204c" : "EFR32ZG23",
+  "brd4204d" : "EFR32ZG23",
+  "brd4205a" : "ZGM230S",
+  "brd4205b" : "ZGM230S",
+  "brd4210a" : "EFR32ZG23",
+  "brd2603a" : "ZGM230S",
+}
 
-def find_in_yaml(d, tag):
-    if tag in d:
-        yield d[tag]
-    for k, v in d.items():
-        if isinstance(v, dict):
-            for i in find(v, tag):
-                yield i
+usb_detector = "./tools/inspect_emdll/inspect_emdll.exe"
 
-
-def main():
-
-    with open("config/config_parameters.yaml", 'r') as stream:
-        data_loaded = yaml.safe_load(stream)
-
-    for val in find_in_yaml(data_loaded, 'studio_location'):
-        usb_detector = val + "developer/adapter_packs/inspect_emdll/inspect_emdll.exe"
-
+def list_devices():
     print("Searching for connected Silabs devices...\n\n")
-    print("Available devices:")
+
+    pattern_serial_number = r"^device\((\d{9})\)"
+    patter_board_name = r"\s*boardName\[\d+\]=([^\s]+) Rev"
+
+    # list of serial numbers, board names and chip names
+    board_list = []
+    serial_number_list = []
+    chip_list = []
+    #call the magic silabs tool
     command = usb_detector +  " -slist"
     cmd = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-    found_board_string = ""
-    number_of_found_board = 0
-    found_serial_number = ""
-    found_board_name = ""
     for line in cmd.stdout:
-        #print(line)
-        if b"(440" in line:
-            serial_number = line[7:-5].decode("utf-8")
-        if b"boardName[0]=BRD2603A" in line or b"boardName[1]=BRD42" in line:
-            found_board_string = serial_number + " --- " + line[15:].decode("utf-8")
-            print(found_board_string)
-            number_of_found_board = number_of_found_board + 1
-            found_serial_number = serial_number
-            found_board_name = line[15:23].decode("utf-8")
-    if number_of_found_board == 0:
-        print("No connected devices!")
-        return "0", "0"
-    elif number_of_found_board == 1:
-        return found_serial_number, found_board_name
+        ascii_line = line.decode('ascii')
+        match = re.match(pattern_serial_number, ascii_line)
+        if (match) and (match.group(1) != "BRD4001A"):
+            serial_number_list.append(match.group(1))
+        match = re.match(patter_board_name, ascii_line)
+        if (match) and (match.group(1) != "BRD4001A"):
+            for board_name, board_chip in SERIES2_BOARDS.items():
+                if board_name == match.group(1).lower():
+                    board_list.append(board_name)
+                    chip_list.append(board_chip)
+    if len(board_list) != 0:
+        print("Available devices:")
+        for i in range(len(board_list)):
+            print("Serial number: " + serial_number_list[i] + " Board: " + board_list[i] + " Chip: " + chip_list[i])
     else:
-        return "0", "0"
+        print("No connected devices!")
+    return (serial_number_list, board_list, chip_list)
 
 if __name__ == "__main__":
-  main()
+  list_devices()
