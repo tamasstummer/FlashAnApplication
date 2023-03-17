@@ -15,11 +15,13 @@ import sys
 import glob
 import yaml
 import list_usb_devices
-import subprocess
+from constants import Constants
 from get_DSK import print_out_dsk
+# from get_frequency import get_frequency
+# from set_frequency import set_frequency
 
 default_frquency = "US"
-default_branch = "develop%252F23q2" # develop/22q4
+default_branch = "develop%252F23q2" # develop/23q2
 default_build = "lastSuccessfulBuild"
 
 #Apps_before_22q2 and board definitions
@@ -31,59 +33,24 @@ Apps = ['zwave_soc_switch_on_off', 'zwave_soc_power_strip', 'zwave_soc_sensor_pi
 NonCertifiableApps = ['zwave_soc_multilevel_sensor']
 TestApps = ['UL_testtool']
 
-
-SERIES1_BOARDS= {
-  "brd4200a": "ZGM130S",
-  "brd4201a": "EFR32ZG14",
-  "brd4202a": "ZGM130S",
-  "brd4207a": "ZGM130S",
-  "brd4208a": "EFR32ZG14",
-  "brd4209a": "EFR32RZ13",
-}
-
-SERIES2_BOARDS= {
-  "brd4204a" : "EFR32ZG23",
-  "brd4204b" : "EFR32ZG23",
-  "brd4204c" : "EFR32ZG23",
-  "brd4204d" : "EFR32ZG23",
-  "brd4205a" : "ZGM230S",
-  "brd4205b" : "ZGM230S",
-  "brd4210a" : "EFR32ZG23",
-  "brd2603a" : "ZGM230S",
-}
-
-frequencies= {
-  "REGION_EU"               : "0x00",
-  "REGION_US"               : "0x01",
-  "REGION_ANZ"              : "0x02",
-  "REGION_HK"               : "0x03",
-  "REGION_IN"               : "0x05",
-  "REGION_IL"               : "0x06",
-  "REGION_RU"               : "0x07",
-  "REGION_CN"               : "0x08",
-  "REGION_US_LR"            : "0x0A",
-  "REGION_US_LR_BACKUP"     : "0x0B",
-  "REGION_2CH_NUM"          : "0x0C",   #(REGION_US_LR_BACKUP - REGION_EU) + 1
-  "REGION_JP"               : "0x20",
-  "REGION_KR"               : "0x21",
-  "REGION_3CH_NUM"          : "0x02",   #(REGION_KR - REGION_JP) + 1
-  "REGION_US_LR_END_DEVICE" : "0x30",
-  "EGION_LR_END_DEVICE_NUM" : "0x01",
-  "REGION_UNDEFINED"        : "0xFE",
-  "REGION_DEFAULT"          : "0xFF",
-}
+constants = Constants()
+SERIES1_BOARDS = constants.get_S1_boards()
+SERIES2_BOARDS = constants.get_S2_boards()
+frequencies = constants.get_frequencies()
 
 #-----------------------------------------------------------------------------------------------
 # Parse the inputs first
-parser = argparse.ArgumentParser(description="Flash any sample application on any board")
-parser.add_argument('--serialno',          type=str, help="JLink serial nmber of the board",                   nargs='?', default = "0") 
-parser.add_argument('--name',              type=str, help="Name of the application, you want to flash.",                               )
-parser.add_argument('--freq',              type=str, help="Frequency of the binary",                           nargs='?', default = default_frquency)
-parser.add_argument('--board',             type=str, help="Target board.",                                                             )
-parser.add_argument('--branch',            type=str, help="Name of a specific jenkins branch.",                nargs='?', default = default_branch)
-parser.add_argument('--build',             type=str, help="Specifies the number of the build on jenkins",      nargs='?', default = default_build)
+def parse_args():
+    parser = argparse.ArgumentParser(description="Flash any sample application on any board")
+    parser.add_argument('--serialno',          type=str, help="JLink serial nmber of the board",                   nargs='?', default = "0") 
+    parser.add_argument('--name',              type=str, help="Name of the application, you want to flash.",                               )
+    parser.add_argument('--freq',              type=str, help="Frequency of the binary",                           nargs='?', default = default_frquency)
+    parser.add_argument('--board',             type=str, help="Target board.",                                                             )
+    parser.add_argument('--branch',            type=str, help="Name of a specific jenkins branch.",                nargs='?', default = default_branch)
+    parser.add_argument('--build',             type=str, help="Specifies the number of the build on jenkins",      nargs='?', default = default_build)
 
-args = parser.parse_args()
+    global args
+    args = parser.parse_args()
 
 # ---------------------------------------------------------------------------------------------
 def download_application_binary(branch_name, build_name, app_name, board_name) -> None:
@@ -103,7 +70,7 @@ def download_application_binary(branch_name, build_name, app_name, board_name) -
         app_name = "zwave_ncp_serial_api"
     global name_of_zip
     name_of_zip = app_name + ".zip"
-    url = "https://zwave-jenkins.silabs.com/job/zw-zwave/job/" + branch_name + "/" + build_name + "/artifact/" + app_chategory + "/" + app_name + "/out/" + extra_path_element + board_name + "_" + "REGION_US" + "/build/release/*zip*/" + name_of_zip
+    url = "https://zwave-jenkins.silabs.com/job/zw-zwave/job/" + branch_name + "/" + build_name + "/artifact/" + app_chategory + "/" + app_name + "/out/" + extra_path_element + board_name + "_" + "REGION_US_LR" + "/build/release/*zip*/" + name_of_zip
     print("This URL is the source of your hex file: " + url)
 
     os.system('wget ' + url)
@@ -176,7 +143,8 @@ def flash_application_binary(serialno, board_name, region_name) -> None:
             # Reset the mfg token
             os.system(commander + " flash --tokengroup znet --token MFG_ZWAVE_COUNTRY_FREQ:" + frequencies.get(region_name)  + " -s " + str(serialno) + " -d " + board)
 
-            #Flash the downloaded hex file
+        # TODO we should use the new get_frequency/set_frequency commands here 
+        #Flash the downloaded hex file
         os.system(commander + " flash " + hex_file_path + " -s " + str(serialno) + " -d " + board)
         if series == "SERIES2":
             #Get the region mfg token's value just for sure
@@ -216,15 +184,23 @@ def find_in_yaml(d, tag):
 
 def check_serial_number(serialno) -> None:
     if serialno == "0":   # if no serialnumber is given from commandline
-        myDevice = list_usb_devices.main()
-        if myDevice[0] != "0":
-            args.serialno = myDevice[0]
-            args.board = myDevice[1].lower()
+        # Get the serial number and board type of the device
+        (numer_of_devices, serialno, board, chip) = list_usb_devices.list_devices()
+        if numer_of_devices == 0:
+            print("No devices found")
+            sys.exit(-1)
+        if numer_of_devices == 1:
+            args.serialno = serialno[0]
+            args.board = board[0]
+            print("Found device with serial number: " + str(args.serialno) + " and board type: " + args.board + "\n")
         else:
-            print("Please use --serialno flag\n")
+            print("More than one device found. Please specify the device serial number and board type")
+            print("Example: python3 flash_an_application.py --name zwave_soc_switch_on_off --freq US --branch develop/22q4 --build lastSuccessfulBuild --serialno 440262211 --board brd4205b")
+            list_usb_devices.list_devices_and_print()
             sys.exit(-1)
 
 def main() -> None:
+    parse_args()
     parse_config_values()
     check_serial_number(args.serialno)
     delete_downloaded_files()

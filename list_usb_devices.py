@@ -1,19 +1,14 @@
 import subprocess
 import re
+from constants import Constants
+import os
 
-# TODO move this to a separate file
-SERIES2_BOARDS= {
-  "brd4204a" : "EFR32ZG23",
-  "brd4204b" : "EFR32ZG23",
-  "brd4204c" : "EFR32ZG23",
-  "brd4204d" : "EFR32ZG23",
-  "brd4205a" : "ZGM230S",
-  "brd4205b" : "ZGM230S",
-  "brd4210a" : "EFR32ZG23",
-  "brd2603a" : "ZGM230S",
-}
+# TODO make the whole file compatible with Series 1 boards as well
+constants = Constants()
+SERIES2_BOARDS = constants.get_S2_boards()
 
 usb_detector = "./tools/inspect_emdll/inspect_emdll.exe"
+usb_detector_win = "tools\inspect_emdll\inspect_emdll.exe"
 
 def list_devices():
     print("Searching for connected Silabs devices...\n\n")
@@ -33,7 +28,10 @@ def list_devices():
     number_of_devices = 0
 
     #call the magic silabs tool
-    command = usb_detector +  " -slist"
+    if os.name == 'nt':
+        command = usb_detector_win +  " -slist"
+    else:
+        command = usb_detector +  " -slist"
     cmd = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     for line in cmd.stdout:
         ascii_line = line.decode('ascii')
@@ -57,6 +55,9 @@ def print_output():
     else:
         print("No connected devices!")
 
-if __name__ == "__main__":
+def list_devices_and_print():
     list_devices()
     print_output()
+
+if __name__ == "__main__":
+    list_devices_and_print()
