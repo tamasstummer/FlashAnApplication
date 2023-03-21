@@ -6,6 +6,7 @@ What can it do for you:
  - connect to the internal jenkins pipeline, and download the desired application binariy
  - reset the board via commander
  - flash the binary to the board
+ - flash bootloader binary to board
  - set the right region to the right MFG Token
 
 What steps are needed before first run:
@@ -53,6 +54,9 @@ python3 flash_a_workspace.py --name zwave_soc_switch_on_off --branch feature/gek
 Binary flash:
 Put the binary to the binary_folder, and give the extension with the --ext flag (hex or s37)
 python3 flash_a_binary --freq US --serialno 440262211 --board brd4205b --ext s37
+
+Bootloader flash:
+python3 flash_bootloader.py --serialno 440269148 --board brd2603a
 
 ```
 
