@@ -18,6 +18,7 @@ import glob
 import yaml
 import list_usb_devices
 import subprocess
+from constants import Constants
 
 default_frquency = "US"
 default_branch = "develop%252F22q4" # develop/22q4
@@ -27,59 +28,23 @@ Apps = ['zwave_soc_switch_on_off', 'zwave_soc_power_strip', 'zwave_soc_sensor_pi
 NonCertifiableApps = ['zwave_soc_multilevel_sensor']
 TestApps = ['UL_testtool']
 
-
-SERIES1_BOARDS= {
-  "brd4200a": "ZGM130S",
-  "brd4201a": "EFR32ZG14",
-  "brd4202a": "ZGM130S",
-  "brd4207a": "ZGM130S",
-  "brd4208a": "EFR32ZG14",
-  "brd4209a": "EFR32RZ13",
-}
-
-SERIES2_BOARDS= {
-  "brd4204a" : "EFR32ZG23",
-  "brd4204b" : "EFR32ZG23",
-  "brd4204c" : "EFR32ZG23",
-  "brd4204d" : "EFR32ZG23",
-  "brd4205a" : "ZGM230S",
-  "brd4205b" : "ZGM230S",
-  "brd4210a" : "EFR32ZG23",
-  "brd2603a" : "ZGM230S",
-}
-
-frequencies= {
-  "REGION_EU"               : "0x00",
-  "REGION_US"               : "0x01",
-  "REGION_ANZ"              : "0x02",
-  "REGION_HK"               : "0x03",
-  "REGION_IN"               : "0x05",
-  "REGION_IL"               : "0x06",
-  "REGION_RU"               : "0x07",
-  "REGION_CN"               : "0x08",
-  "REGION_US_LR"            : "0x0A",
-  "REGION_US_LR_BACKUP"     : "0x0B",
-  "REGION_2CH_NUM"          : "0x0C",   #(REGION_US_LR_BACKUP - REGION_EU) + 1
-  "REGION_JP"               : "0x20",
-  "REGION_KR"               : "0x21",
-  "REGION_3CH_NUM"          : "0x02",   #(REGION_KR - REGION_JP) + 1
-  "REGION_US_LR_END_DEVICE" : "0x30",
-  "EGION_LR_END_DEVICE_NUM" : "0x01",
-  "REGION_UNDEFINED"        : "0xFE",
-  "REGION_DEFAULT"          : "0xFF",
-}
+constants = Constants()
+SERIES1_BOARDS = constants.get_S1_boards()
+SERIES2_BOARDS = constants.get_S2_boards()
+frequencies = constants.get_frequencies()
 
 #-----------------------------------------------------------------------------------------------
 # Parse the inputs first
-parser = argparse.ArgumentParser(description="Flash any sample application on any board")
-parser.add_argument('--serialno',          type=str, help="JLink serial nmber of the board",                   nargs='?', default = "0") 
-parser.add_argument('--name',              type=str, help="Name of the application, you want to flash.",                               )
-parser.add_argument('--freq',              type=str, help="Frequency of the binary",                           nargs='?', default = default_frquency)
-parser.add_argument('--board',             type=str, help="Target board.",                                                             )
-parser.add_argument('--branch',            type=str, help="Name of a specific jenkins branch.",                nargs='?', default = default_branch)
-parser.add_argument('--build',             type=str, help="Specifies the number of the build on jenkins",      nargs='?', default = default_build)
-
-args = parser.parse_args()
+def parse_args():
+    parser = argparse.ArgumentParser(description="Flash any sample application on any board")
+    parser.add_argument('--serialno',          type=str, help="JLink serial nmber of the board",                   nargs='?', default = "0") 
+    parser.add_argument('--name',              type=str, help="Name of the application, you want to flash.",                               )
+    parser.add_argument('--freq',              type=str, help="Frequency of the binary",                           nargs='?', default = default_frquency)
+    parser.add_argument('--board',             type=str, help="Target board.",                                                             )
+    parser.add_argument('--branch',            type=str, help="Name of a specific jenkins branch.",                nargs='?', default = default_branch)
+    parser.add_argument('--build',             type=str, help="Specifies the number of the build on jenkins",      nargs='?', default = default_build)
+    global args
+    args = parser.parse_args()
 
 # ---------------------------------------------------------------------------------------------
 def download_application_binary(branch_name, build_name, app_name, board_name) -> None:
@@ -221,6 +186,7 @@ def give_back_series(board_name) ->str:
 
 
 def main() -> None:
+    parse_args()
     parse_config_values()
     check_serial_number(args.serialno)
     delete_downloaded_files()
