@@ -54,3 +54,4 @@ __pycache__/*
 config/config_parameters.yaml
 tools/__pycache__
 node_modules
+tools/devices.yaml

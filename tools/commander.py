@@ -30,8 +30,8 @@ class Commander:
         self.__DPRINT("Hex file flashed with chip name " + chip_name + " and serial number " + str(serialno))
 
     def read_dsk(self, serialno, chip_name, app_name):
-        if app_name == "zwave_ncp_serial_api_controller":
-            self.__DPRINT("No DSK for the serial API controller")
+        if app_name == "zwave_ncp_serial_api_controller" or app_name == "zwave_ncp_serial_api_end_device":
+            self.__DPRINT("No DSK for the serial API controller / end device")
             return
         cmd = self.commander_path + " tokendump --tokengroup znet --token MFG_ZW_QR_CODE -s " + str(serialno) + " -d " + chip_name
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)

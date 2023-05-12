@@ -16,24 +16,34 @@ class Inspector:
         self.__number_of_devices = 0
 
     def list_devices(self):
+        devices = []
+
         print("Searching for connected Silabs devices...\n\n")
 
-        #call the magic Silabs tool
-        command = self.__inspector_path +  " -slist"
+        # Call the magic Silabs tool
+        command = self.__inspector_path + " -slist"
         cmd = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-        
+
         # Loop through the output of the tool and extract the serial number and board name
         for line in cmd.stdout:
             ascii_line = line.decode('ascii')
             match = re.match(self.__pattern_serial_number, ascii_line)
-            if (match):
-                self.__serial_number_list.append(match.group(1))
+            if match:
+                serial_number = match.group(1)
+                device = {"serial_number": serial_number}
+                self.__serial_number_list.append(serial_number)
                 self.__number_of_devices += 1
-                # self.__DPRINT("Found device with serial number: " + match.group(1))
+
             match = re.match(self.__pattern_board_name, ascii_line)
-            if (match) and (match.group(1) != "BRD4001A") and (match.group(1) != "BRD4002A") and (match.group(1) != "BRD8029A"):
-                    self.__board_list.append(match.group(1))
-                    # self.__DPRINT("Found device with board name: " + match.group(1))
+            if match and (match.group(1) != "BRD4001A") and (match.group(1) != "BRD4002A") and (
+                    match.group(1) != "BRD8029A"):
+                board_name = match.group(1)
+                device["board_name"] = board_name
+                self.__board_list.append(board_name)
+                devices.append(device)
+
+        return devices
+
 
     def print_output(self):
         if self.__number_of_devices != 0:
