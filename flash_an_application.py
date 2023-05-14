@@ -102,12 +102,6 @@ def flash_application_binary(app_name, region_name, node_id, commander, device_h
     chip_name = constants.get_board_info(board_name)[0]
     series = constants.get_board_info(board_name)[1]
 
-    print(device_data)
-    print(serial_number)
-    print(board_name)
-    print(chip_name)
-    print(series)
-
     # Reset device
     commander.reset_device(serial_number, chip_name)
     # Flash the downloaded hex file
@@ -145,9 +139,11 @@ def main() -> None:
     device_handler.print_devices()
 
     delete_downloaded_files()
+
     download_application_binary(args.branch, args.build, args.name, args.node, device_handler)
     unzip_downloaded_binary()
     flash_application_binary(args.name, args.freq, args.node, commander, device_handler)
+    
     delete_downloaded_files()
 
 if __name__ == "__main__":
