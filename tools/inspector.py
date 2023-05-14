@@ -1,6 +1,5 @@
 import subprocess
 import re
-from constants import Constants
 import os
 
 class Inspector:
@@ -35,8 +34,7 @@ class Inspector:
                 self.__number_of_devices += 1
 
             match = re.match(self.__pattern_board_name, ascii_line)
-            if match and (match.group(1) != "BRD4001A") and (match.group(1) != "BRD4002A") and (
-                    match.group(1) != "BRD8029A"):
+            if match and (match.group(1) != "BRD4001A") and (match.group(1) != "BRD4002A") and (match.group(1) != "BRD8029A"):
                 board_name = match.group(1)
                 device["board_name"] = board_name
                 self.__board_list.append(board_name)

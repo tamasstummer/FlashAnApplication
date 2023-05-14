@@ -19,9 +19,8 @@ class DeviceHandler:
     def get_device_data(self, device_id):
         with open(self.yaml_file, "r") as file:
             devices = yaml.safe_load(file)
-
             for device in devices:
-                if device.get("id") == device_id:
+                if device.get("id") == int(device_id):
                     return device
 
         return None  # Return None if device ID is not found in the yaml file

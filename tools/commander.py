@@ -45,7 +45,7 @@ class Commander:
             key = number[12:52]  # extract the key from the 13th place of the big number
             sections = [key[i:i+5] for i in range(0, len(key), 5)]  # split the key into 5 long sections of 5 digits each
             formatted_key = '-'.join(sections)  # join the sections with dashes
-            self.__DPRINT("DSK: " + formatted_key)
+            print("DSK: " + formatted_key)
         else:
             self.__DPRINT("No DSK found with " + chip_name + " and serial number " + str(serialno) + ". Please check the serial number and board type.")
 
