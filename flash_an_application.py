@@ -101,14 +101,14 @@ def flash_application_binary(app_name, region_name, node_id, commander, device_h
     board_name = device_data['board_name']
     chip_name = constants.get_board_info(board_name)[0]
     series = constants.get_board_info(board_name)[1]
+    frequency = constants.get_frequencies(region_name)
 
     # Reset device
     commander.reset_device(serial_number, chip_name)
     # Flash the downloaded hex file
     commander.flash_hex_file(hex_file_path, serial_number, chip_name)
-
-    if series == "SERIES2":
-        commander.set_frequency(serial_number, chip_name, region_name)
+    if series == "SERIES_2":
+        commander.set_frequency(serial_number, chip_name, frequency)
         # Get the region mfg token's value just to be sure
         commander.read_frequency(serial_number, chip_name)
 
