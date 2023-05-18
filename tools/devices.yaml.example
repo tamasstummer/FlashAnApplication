@@ -1,5 +1,0 @@
-- id: 1
-  serial_number: 123456789
-  board_name: "example_board_name"
-  chip_name: "example_chip_name"
-  frequency: "example_frequency"

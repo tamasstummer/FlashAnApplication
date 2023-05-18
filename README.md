@@ -40,19 +40,19 @@ Example call:
 
 # SLC App:
 ```python
-python3 flash_an_application.py --name zwave_soc_switch_on_off --freq US --branch develop/23q2 --build lastSuccessfulBuild --node 1
+python flash_an_application.py --name zwave_soc_switch_on_off --freq US --branch develop/23q2 --build lastSuccessfulBuild --node 1
 ```
 or a shorter call
 ```python
-python3 flash_an_application.py --name zwave_soc_switch_on_off --node 1
+python flash_an_application.py --name zwave_soc_switch_on_off --node 1
 ```
 # Binary flash
 Put the binary to the binary_folder, and give the extension with the --ext flag (hex or s37)
 ```python
-python3 flash_a_binary.py --freq US --serialno 440262211 --board brd4205b --ext s37
+python flash_a_binary.py --freq US --serialno 440262211 --board brd4205b --ext s37
 ```
 
 # Bootloader flash:
 ```python
-python3 flash_bootloader.py --serialno 440269148 --board brd2603a
+python flash_bootloader.py --serialno 440269148 --board brd2603a
 ```
